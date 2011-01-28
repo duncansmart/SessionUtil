@@ -20,7 +20,7 @@ namespace LogoffUser
             {
                 try
                 {
-                    var session = RemoteDesktopServerUtil.GetSessions()
+                    var session = RemoteDesktopUtil.GetSessions()
                         .FirstOrDefault(s => s.UserName != null && s.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));
 
                     if (session == null)

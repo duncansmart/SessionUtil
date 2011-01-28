@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace LogoffUser
 {
-    class RemoteDesktopServerUtil
+    class RemoteDesktopUtil
     {
         #region PInvoke
         [DllImport("wtsapi32.dll")]
