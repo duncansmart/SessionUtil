@@ -14,31 +14,45 @@ void printError(TCHAR *messageFormat)
 
 void logoffUser(TCHAR *userToLogoff)
 {
-	WTS_SESSION_INFO_1 *pSessionInfo;
-	DWORD level = 1, count;
-	if (!WTSEnumerateSessionsEx(WTS_CURRENT_SERVER_HANDLE, &level, 0, &pSessionInfo, &count))
+	WTS_SESSION_INFO *sessions;
+	DWORD count;
+	if (!WTSEnumerateSessions(WTS_CURRENT_SERVER_HANDLE, 0, 1, &sessions, &count))
 	{
-		printError(L"WTSEnumerateSessionsEx failed: %s\n");
+		printError(L"WTSEnumerateSessions failed: %s\n");
 		return;
 	}
 	wprintf(L"Logging off %s\n", userToLogoff);
+	bool loggedOff = false;
 	for (DWORD i = 0; i < count; i++)
 	{
-		//wprintf(L"* session %d %s\n", pSessionInfo[i].SessionId, pSessionInfo[i].pUserName);
-		if (pSessionInfo[i].pUserName != NULL)
+		WCHAR *sessionUser; 
+		DWORD bytes;
+		if (!WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessions[i].SessionId, WTS_INFO_CLASS::WTSUserName, &sessionUser, &bytes))
 		{
-			if (_wcsicmp(userToLogoff, pSessionInfo[i].pUserName) == 0)
+			printError(L"WTSQuerySessionInformation error: %s\n");
+			continue;
+		}
+
+		//wprintf(L"* Session %d: \n    user: %s\n    state: %d\n    name: %s\n", sessions[i].SessionId, sessionUser, sessions[i].State, sessions[i].pWinStationName);
+
+		if (sessionUser != NULL && _wcsicmp(userToLogoff, sessionUser) == 0)
+		{
+			wprintf(L"  Session %d: %s\n", sessions[i].SessionId, sessionUser);
+			if (!WTSLogoffSession(WTS_CURRENT_SERVER_HANDLE, sessions[i].SessionId, TRUE))
+				printError(L"WTSLogoffSession failed: %s");
+			else 
 			{
-				wprintf(L"Logging off session %d %s\\%s\n", pSessionInfo[i].SessionId, pSessionInfo[i].pDomainName, pSessionInfo[i].pUserName);
-				if (!WTSLogoffSession(WTS_CURRENT_SERVER_HANDLE, pSessionInfo[i].SessionId, TRUE))
-					printError(L"WTSLogoffSession failed: %s");
-				else
-					wprintf(L"  ...done.");
+				wprintf(L"  ...done.");
+				loggedOff = true;
 			}
 		}
-	}
 
-	WTSFreeMemory(pSessionInfo);
+		WTSFreeMemory(sessionUser);
+	}
+	if (!loggedOff)
+		wprintf(L"  session not found.\n");
+
+	WTSFreeMemory(sessions);
 }
 
 int _tmain(int argc, _TCHAR* argv[])
