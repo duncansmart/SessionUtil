@@ -1,8 +1,8 @@
 # LogoffUser
-A simple comamnd-line utilty that will log off user sessions on the current computer.
+A simple command-line utilty for Windows that will log off user sessions on the current computer. Only tested on Windows 7. No reason it shouldn't work on Vista and XP.
 
 ## Usage
 Log off a single user called Lily:
-    LogoffUser Lily
-Log off users called Lily and Tom:
-    LogoffUser Lily Tom
+    logoffuser Lily
+Log off users Lily and Tom:
+    logoffuser Lily Tom
