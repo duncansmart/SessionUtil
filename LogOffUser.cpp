@@ -12,18 +12,16 @@ void printError(TCHAR *messageFormat)
 	LocalFree(pErrorMsg);
 }
 
-int logoffUser(TCHAR *userToLogoff)
+void logoffUser(TCHAR *userToLogoff)
 {
 	WTS_SESSION_INFO_1 *pSessionInfo;
 	DWORD level = 1, count;
 	if (!WTSEnumerateSessionsEx(WTS_CURRENT_SERVER_HANDLE, &level, 0, &pSessionInfo, &count))
 	{
 		printError(L"WTSEnumerateSessionsEx failed: %s\n");
-		return 2;
+		return;
 	}
-
-	int result = 0;
-
+	wprintf(L"Logging off %s\n", userToLogoff);
 	for (DWORD i = 0; i < count; i++)
 	{
 		//wprintf(L"* session %d %s\n", pSessionInfo[i].SessionId, pSessionInfo[i].pUserName);
@@ -33,33 +31,28 @@ int logoffUser(TCHAR *userToLogoff)
 			{
 				wprintf(L"Logging off session %d %s\\%s\n", pSessionInfo[i].SessionId, pSessionInfo[i].pDomainName, pSessionInfo[i].pUserName);
 				if (!WTSLogoffSession(WTS_CURRENT_SERVER_HANDLE, pSessionInfo[i].SessionId, TRUE))
-				{
 					printError(L"WTSLogoffSession failed: %s");
-					result = 3;
-				}
 				else
-				{
 					wprintf(L"  ...done.");
-				}
 			}
 		}
 	}
 
 	WTSFreeMemory(pSessionInfo);
-
-	return result;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	if (argc == 1)
 	{
-		wprintf(L"Usage: LogOffUser <username>\n");
+		wprintf(L"Usage: LogOffUser <username> [<username2>...]\n");
 		return 1;
 	}
 
-	TCHAR* userToLogoff = argv[1];
+	for (int i = 1; i < argc; i++)
+	{
+		logoffUser(argv[i]);
+	}
 
-	return logoffUser(userToLogoff);
 }
 
