@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogOffUser", "LogOffUser.vcxproj", "{820CF6E8-BC6A-4AB2-AF87-E240C76A5BDB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SessionUtil", "SessionUtil.vcxproj", "{820CF6E8-BC6A-4AB2-AF87-E240C76A5BDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
