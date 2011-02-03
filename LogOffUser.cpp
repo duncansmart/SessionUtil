@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-//using namespace std;
+using namespace std;
 
 void printError(TCHAR *messageFormat)
 {
@@ -118,22 +118,26 @@ void printUsage()
     );
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int _tmain(int argc, TCHAR* argv[])
 {
+
     if (argc == 1)
     {
         printUsage();
         return 1;
     }
 
-    if (_wcsicmp(argv[1], L"-switch") == 0)
+
+	if (_wcsicmp(argv[1], L"-switch") == 0 ||
+		_wcsicmp(argv[1], L"/switch") == 0)
     {
         if (argc > 2)
             return switchUser(argv[2], argv[3]);
         else
             WTSDisconnectSession(WTS_CURRENT_SERVER_HANDLE,  WTS_CURRENT_SESSION, false);
     }
-    else if (_wcsicmp(argv[1], L"-logoff") == 0)
+    else if (_wcsicmp(argv[1], L"-logoff") == 0 ||
+		     _wcsicmp(argv[1], L"/logoff") == 0)
     {
         if (argc > 2)
         {
