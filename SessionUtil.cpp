@@ -113,6 +113,8 @@ void printUsage()
     \n\
     sessionutil logoff\n\
     sessionutil logoff <username> [<username2> ...]\n\
+    \n\
+    sessionutil sleep\n\
     "
     );
 }
@@ -129,7 +131,7 @@ int _tmain(int argc, TCHAR* argv[])
     {
         if (argc > 2)
             return switchUser(argv[2], argv[3]);
-        else
+        else // go to Switch User screen
             WTSDisconnectSession(WTS_CURRENT_SERVER_HANDLE,  WTS_CURRENT_SESSION, false);
     }
     else if (_wcsicmp(argv[1], L"LOGOFF") == 0)
@@ -143,6 +145,14 @@ int _tmain(int argc, TCHAR* argv[])
         {
             WTSLogoffSession(WTS_CURRENT_SERVER_HANDLE, WTS_CURRENT_SESSION, true);
         }
+    }
+    else if (_wcsicmp(argv[1], L"SLEEP") == 0)
+    {
+        SetSuspendState(/*bHibernate*/ FALSE, 
+            /*bForce*/ FALSE, 
+            /*bWakeupEventsDisabled*/ FALSE);
+        // Go to Switch User screen
+        WTSDisconnectSession(WTS_CURRENT_SERVER_HANDLE,  WTS_CURRENT_SESSION, false);
     }
     else 
     {
