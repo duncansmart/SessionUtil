@@ -16,3 +16,5 @@
 #include <Windows.h>
 #include <WtsApi32.h>
 #include <powrprof.h>
+
+#include <ShellAPI.h>

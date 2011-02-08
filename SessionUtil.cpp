@@ -119,8 +119,39 @@ void printUsage()
     );
 }
 
+void showBalloonTip(TCHAR* msg)
+{
+	static bool nidset = false;
+	static NOTIFYICONDATA nid = {};
+
+	if (nidset == false)
+	{
+		nid.cbSize = sizeof(nid);
+		nid.hIcon = LoadIcon(NULL, IDI_INFORMATION);
+
+		GUID tipGuid = {0x30375b04, 0x977b, 0x410f, { 0x9e, 0xb7, 0x46, 0xed, 0xb5, 0xf7, 0xf4, 0xe2 }};
+		nid.guidItem = tipGuid;
+
+		nid.uFlags = NIF_INFO | NIF_ICON | NIF_GUID;
+		nidset = true;
+	}
+
+	wcsncpy_s(nid.szInfo, msg, ARRAYSIZE(nid.szInfo));
+
+	Shell_NotifyIcon(nidset ? NIM_MODIFY : NIM_ADD, &nid);
+
+	//Shell_NotifyIcon(NIM_DELETE, &nid) ? S_OK : E_FAIL;
+}
+
 int _tmain(int argc, TCHAR* argv[])
 {
+	showBalloonTip(L"Hello world!");
+	Sleep(2000);
+	showBalloonTip(L"Hello world!\nagain!");
+	Sleep(1000);
+
+	return 0;
+
     if (argc == 1)
     {
         printUsage();
