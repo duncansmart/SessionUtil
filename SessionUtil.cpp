@@ -92,7 +92,7 @@ int logoffUser(TCHAR *userToLogoff)
             return 3;
         }
         else 
-            wprintf(L"  ...done.");
+            wprintf(L"  ...done.\n");
     }
     else 
     {
@@ -108,35 +108,31 @@ void printUsage()
 
     wprintf(
     L"Usage:\n\
-    sessionutil -switch\n\
-    sessionutil -switch <username> <password>\n\
+    sessionutil switch\n\
+    sessionutil switch <username> <password>\n\
     \n\
-    sessionutil -logoff\n\
-    sessionutil -logoff <username> [<username2> ...]\n\
+    sessionutil logoff\n\
+    sessionutil logoff <username> [<username2> ...]\n\
     "
     );
 }
 
 int _tmain(int argc, TCHAR* argv[])
 {
-
     if (argc == 1)
     {
         printUsage();
         return 1;
     }
 
-
-	if (_wcsicmp(argv[1], L"-switch") == 0 ||
-		_wcsicmp(argv[1], L"/switch") == 0)
+	if (_wcsicmp(argv[1], L"SWITCH") == 0)
     {
         if (argc > 2)
             return switchUser(argv[2], argv[3]);
         else
             WTSDisconnectSession(WTS_CURRENT_SERVER_HANDLE,  WTS_CURRENT_SESSION, false);
     }
-    else if (_wcsicmp(argv[1], L"-logoff") == 0 ||
-		     _wcsicmp(argv[1], L"/logoff") == 0)
+    else if (_wcsicmp(argv[1], L"LOGOFF") == 0)
     {
         if (argc > 2)
         {
