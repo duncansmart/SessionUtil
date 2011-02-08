@@ -1,4 +1,4 @@
-# LogoffUser
+# SessionUtil
 A simple command-line utilty for Windows that will:
 
 * Log off user sessions on the current computer
