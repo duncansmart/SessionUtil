@@ -18,3 +18,4 @@
 #include <powrprof.h>
 
 #include <ShellAPI.h>
+#include <string>

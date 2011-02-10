@@ -11,6 +11,30 @@ void printError(TCHAR *messageFormat)
     LocalFree(pErrorMsg);
 }
 
+void showBalloonTip(const TCHAR* msg)
+{
+	static bool nidset = false;
+	static NOTIFYICONDATA nid = {};
+
+	if (nidset == false)
+	{
+		nid.cbSize = sizeof(nid);
+		nid.hIcon = LoadIcon(NULL, IDI_INFORMATION);
+
+		GUID tipGuid = {0x30375b04, 0x977b, 0x410f, { 0x9e, 0xb7, 0x46, 0xed, 0xb5, 0xf7, 0xf4, 0xe2 }};
+		nid.guidItem = tipGuid;
+
+		nid.uFlags = NIF_INFO | NIF_ICON | NIF_GUID;
+		nidset = true;
+	}
+
+	wcsncpy_s(nid.szInfo, msg, ARRAYSIZE(nid.szInfo));
+
+	Shell_NotifyIcon(nidset ? NIM_MODIFY : NIM_ADD, &nid);
+
+	//Shell_NotifyIcon(NIM_DELETE, &nid) ? S_OK : E_FAIL;
+}
+
 int findSession(TCHAR *userToFind)
 {
     int sessionId = -1;
@@ -63,7 +87,13 @@ int switchUser(TCHAR *username, TCHAR *password)
 
     if (sessionId == -1) 
     {	
-        wprintf(L"Session for %s not found\n", username);
+		std::wstring msg;
+		msg.append(L"Session for ")
+			.append(username)
+			.append(L" not found");
+
+		wprintf(msg.c_str());
+		showBalloonTip(msg.c_str());
         return 2;
     }
 
@@ -96,7 +126,13 @@ int logoffUser(TCHAR *userToLogoff)
     }
     else 
     {
-        wprintf(L"  session not found.\n");
+		std::wstring msg;
+		msg.append(L"Session for ")
+			.append(userToLogoff)
+			.append(L" not found");
+		wprintf(msg.c_str());
+		showBalloonTip(msg.c_str());
+
         return 2;
     }
 
@@ -119,38 +155,9 @@ void printUsage()
     );
 }
 
-void showBalloonTip(TCHAR* msg)
-{
-	static bool nidset = false;
-	static NOTIFYICONDATA nid = {};
-
-	if (nidset == false)
-	{
-		nid.cbSize = sizeof(nid);
-		nid.hIcon = LoadIcon(NULL, IDI_INFORMATION);
-
-		GUID tipGuid = {0x30375b04, 0x977b, 0x410f, { 0x9e, 0xb7, 0x46, 0xed, 0xb5, 0xf7, 0xf4, 0xe2 }};
-		nid.guidItem = tipGuid;
-
-		nid.uFlags = NIF_INFO | NIF_ICON | NIF_GUID;
-		nidset = true;
-	}
-
-	wcsncpy_s(nid.szInfo, msg, ARRAYSIZE(nid.szInfo));
-
-	Shell_NotifyIcon(nidset ? NIM_MODIFY : NIM_ADD, &nid);
-
-	//Shell_NotifyIcon(NIM_DELETE, &nid) ? S_OK : E_FAIL;
-}
 
 int _tmain(int argc, TCHAR* argv[])
 {
-	showBalloonTip(L"Hello world!");
-	Sleep(2000);
-	showBalloonTip(L"Hello world!\nagain!");
-	Sleep(1000);
-
-	return 0;
 
     if (argc == 1)
     {
